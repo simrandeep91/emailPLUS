@@ -1,0 +1,24 @@
+ <parameter name="cid" class="java.lang.Integer"/>
+
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     CameraMaster.`Camera_Name` AS CameraMaster_Camera_Name,
+     ClientCameraActivity.`Camera_Id` AS ClientCameraActivity_Camera_Id,
+     ClientCameraActivity.`Start_Time` AS ClientCameraActivity_Start_Time,
+     ClientCameraActivity.`Duration` AS ClientCameraActivity_Duration
+FROM
+     `CameraMaster` CameraMaster INNER JOIN `ClientCameraActivity` ClientCameraActivity ON CameraMaster.`Camera_Id` = ClientCameraActivity.`Camera_Id`   where ClientCameraActivity.`Client_id`= $P{cid} ]]>
+	</queryString>
+
+
+
+
+servlet////////////////////////////////////
+
+   Map parameters = new HashMap();
+
+           parameters.put("cid", cid);
+
+           Connection con = DBConnection.getConnection();
+           JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, con);
+

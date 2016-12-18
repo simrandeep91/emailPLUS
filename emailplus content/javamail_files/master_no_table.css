@@ -1,0 +1,285 @@
+/*****************************************************************************
+	Font and Text Styles
+ *****************************************************************************/
+
+H1, .head1 {
+	font-family			:	arial,helvetica,sans-serif;   
+	font-size				:	24pt;
+	text-align			:	center; 
+}
+
+H2 {
+	font-family			:	arial,helvetica,sans-serif;   
+	text-align			:	center; 
+}
+
+H3 {
+	font-family			:	arial,helvetica,sans-serif;   
+}
+
+H4 {
+	font-family			:	arial,helvetica,sans-serif; 
+	font-style			:	italic;  
+}
+
+/*
+H1, H2 {
+	font						:	 bold 16pt "helvetica", "arial", sans-serif; 
+} 
+*/
+
+/*
+li, p, ol, ul {
+	font-size				:	10pt
+} 
+*/
+
+/**** Inset boxes *****/
+.inset {
+	font-size				:	10pt; 
+}
+
+CODE, PRE {
+	font-size				:	9pt; 
+}
+
+/*
+SAMP { 
+	font-family			:	monospace;   
+}
+*/
+
+/**** Table caption ****/
+.capt {
+	font-family			:	arial,helvetica,sans-serif; 
+	font-size				:	14pt; 
+	font-weight			:	bold; 
+	text-align			:	center
+} 
+
+/**** Table sub-section ****/
+.sect {
+	font-family			:	arial,helvetica,sans-serif; 
+	font-size				:	12pt; 
+	font-style			:	italic; 
+	font-weight			:	bold; 
+	text-align			:	left; 
+}
+
+/**** Key column ****/
+.key {
+	text-align			:	left; 
+}
+
+/**** Value column ****/
+.val {
+	text-align			:	left; 
+}
+
+/**** Remarks column ****/
+.rema {
+	text-align			:	left; 
+}
+
+
+/*****************************************************************************
+	Color and Background Styles
+ *****************************************************************************/
+ 
+/**** Standard 16 colors - 
+ 				white 
+ 				silver 
+ 				gray 
+ 				black 
+
+				fuchsia
+ 				red
+ 				maroon 
+ 				purple
+ 				
+ 				lime
+ 				green
+ 				olive
+
+ 				aqua
+ 				teal
+ 				blue
+ 				navy 
+				
+ 				yellow
+****/
+ 
+
+:	link { 
+	color						: blue
+}
+
+:	visited {
+	color						: #000066
+}
+
+:	active {
+	color						: #ff0000
+}
+
+BODY {
+	background-color:	#eeeeee; 
+	color						:	#000033
+}
+
+H1, .head1 {
+	color						:	#333333;   
+}
+
+H2 {
+	color						:	#990000;   
+}
+
+H3 {
+	color						:	#0000cc
+}
+
+H4 {
+	color						:	#003300
+}
+
+/*
+UL {
+	color			:	 #000068
+} 
+*/
+
+/**** Inset boxes *****/
+.inset {
+	background-color:	#cccc99
+}
+
+/**** Highlighted Text class ****/
+.hlt {
+	background-color:	#ffff99
+} 
+
+
+CODE, PRE {
+	color							:	blue 
+}
+
+/**** Table caption ****/
+.capt {
+	color							:	teal; 
+} 
+
+/**** Table sub-section ****/
+.sect {
+	color							:	maroon; 
+	border-color			:	silver;
+}
+
+/**** Key column ****/
+.key {
+	border-color			:	silver;
+}
+
+/**** Value column ****/
+.val {
+	border-color			:	silver;
+}
+
+/**** Remarks column ****/
+.rema {
+	border-color			:	silver;
+}
+
+
+
+/*****************************************************************************
+	Box and Placement Styles
+ *****************************************************************************/
+ 
+/**** Absolute positioning ****/
+/*
+#heading {
+ 	position					:	absolute;
+ 	top								:	100px;
+ 	left							:	50px;
+ 	z-index						:	3
+}
+*/
+
+H1, .head1 {
+	margin-top				: 0pt; 
+	margin-bottom			: 0pt; 
+	padding-top				:	0pt; 
+	padding-bottom		:	0pt
+}
+
+H2 {
+	border-style			:	solid; 
+	border-width			:	0 0 2pt 0
+}
+
+
+/**** Table sub-section ****/
+.sect {
+	border-width			:	0px; 
+	border-style			:	solid; 
+}
+
+/**** Key column ****/
+.key {
+	border-width			:	1px; 
+	border-style			:	solid;
+	vertical-align: middle;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 8pt;
+	border-color: silver;
+	border-width: 1px;
+	border-style: solid;
+}
+
+/**** Value column ****/
+.val {
+	border-width			:	1px; 
+	border-style			:	solid; 
+	vertical-align: middle;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 8pt;
+	border-color: silver;
+	border-width: 1px;
+	border-style: solid;
+}
+
+/**** Remarks column ****/
+.rema {
+	border-width			:	1px; 
+	border-style			:	solid; 
+	vertical-align: middle;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 8pt;
+	border-color: silver;
+	border-width: 1px;
+	border-style: solid;
+}
+
+
+/*****************************************************************************
+	List Styles
+ *****************************************************************************/
+
+ul li {
+	list-style			:	 disc
+}
+
+ul ul li {
+	list-style			:	 circle
+}
+
+ol li {
+	list-style			:	 decimal
+}
+
+/*
+UL {
+	list-style-type	:	 disc; 
+} 
+*/

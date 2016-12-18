@@ -1,0 +1,1192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<meta name="Author" content="Vipan Singla">
+<meta name="Keywords" content="JavaMail, send email using java, MIME email, internet mail, SMTP using Java, POP3 using java, IMAP using java, multipart message, store protocol, transport protocol">
+<meta name="Description" content="Condenses the JavaMail Specification and API to explain how to send and receive mail from within Java code">
+
+<link rel="stylesheet" type="text/css" href="javamail_files/master_no_table.css">
+
+<style type="text/css">
+<!-- /* Hide from non-stylesheet aware browsers */
+
+/* End hiding */ -->
+</style>
+
+<title>E-Mailing Through Java</title>
+</head>
+
+<body>
+
+<hr>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody><tr>
+    <td style="border-width: 0pt; text-align: left;" align="left" width="37%"><span style="font-family:arial,helvetica,sans-serif; font-size:12pt; text-align:left">Home: <strong><a href="http://www.vipan.com/">www.vipan.com</a></strong></span></td>
+    <td style="border-width: 0pt;" align="center" width="26%"><span style="font-family:arial,helvetica,sans-serif; font-size:14pt; font-weight:bold">Vipan
+        Singla</span></td>
+    <td style="border-width: 0pt; text-align: right;" align="right" width="37%"><span style="font-family:arial,helvetica,sans-serif; font-size:12pt; text-align:right">e-mail: <strong><em> <a href="mailto:vipan@vipan.com">vipan@vipan.com</a></em></strong></span></td>
+  </tr>
+</tbody></table>
+
+<div class="head1">E-Mailing Through Java</div>
+<hr>
+
+
+<h2>JavaMail</h2>
+<table border="0" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td valign="top">
+<ul>
+<li>You can send or fetch e-mail through your Java application or servlet using the <span class="hlt">JavaMail API</span>.
+
+</li><li>You <span class="hlt"><i>use</i></span> the JavaMail API where as JavaMail implementation providers <span class="hlt"><i>implement</i></span> the JavaMail API to give you a JavaMail client (Java JAR file).  <span class="hlt">Sun gives you <code>mail.jar</code> which has Sun's SMTP, POP3 and IMAP client implementations along with the JavaMail API.</span>  This is sufficient to send and receive e-mail but not to read or post to newgroups which use NNTP.
+
+</li></ul>
+		</td>
+		<td valign="top"><script type="text/javascript"><!--
+google_ad_client = "pub-4447351096301747";
+google_ad_width = 300;
+google_ad_height = 250;
+google_ad_format = "300x250_as";
+google_color_border = "DDB7BA";
+google_color_bg = "FFF5F6";
+google_color_link = "0000CC";
+google_color_url = "008000";
+google_color_text = "6F6F6F";
+//--></script>
+<script type="text/javascript" src="javamail_files/show_ads.js">
+</script><ins style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px"><ins id="aswift_0_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px"><iframe allowtransparency="true" hspace="0" marginwidth="0" marginheight="0" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){i+='.call';setTimeout(h,0)}else if(h.match){i+='.nav';w.location.replace(h)}s.log&amp;&amp;s.log.push(i)}" vspace="0" id="aswift_0" name="aswift_0" style="left: 0pt; position: absolute; top: 0pt;" scrolling="no" frameborder="0" height="250" width="300"></iframe></ins></ins>
+		</td>
+	</tr>
+</tbody></table>
+
+
+<ul>
+
+</ul>
+
+
+
+<h2>Sample Code to Send E-Mail</h2>
+
+<ul>
+
+<li>To compile and run, you <span class="hlt">must have <code>mail.jar</code></span> (from the JavaMail download) and <span class="hlt"><code>activation.jar</code></span> (from the JavaBeans Activation Framework download) in Java classpath.
+
+</li><li><span class="hlt">You need to replace email addresses and mail server with your values where noted.</span>
+  Username and password is generally not needed to send e-mail although 
+your ISP may still require it to prevent spam from going through its 
+systems.
+
+</li><li>This sample code has debugging turned on ("mail.debug") to see what is going on behind the scenes in JavaMail code.<pre>import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
+
+// Send a simple, single part, text/plain e-mail
+public class TestEmail {
+
+    public static void main(String[] args) {
+
+        // SUBSTITUTE YOUR EMAIL ADDRESSES HERE!!!
+        String to = "vipan@vipan.com";
+        String from = "vipan@vipan.com";
+        // SUBSTITUTE YOUR ISP'S MAIL SERVER HERE!!!
+        String host = "smtp.yourisp.net";
+
+        // Create properties, get Session
+        Properties props = new Properties();
+
+        // If using static Transport.send(),
+        // need to specify which host to send it to
+        props.put("mail.smtp.host", host);
+        // To see what is going on behind the scene
+        props.put("mail.debug", "true");
+        <span class="hlt">Session session = Session.getInstance(props);</span>
+
+        try {
+            // Instantiatee a message
+            <span class="hlt">Message msg = new MimeMessage(session);</span>
+
+            //Set message attributes
+            <span class="hlt">msg.setFrom(new InternetAddress(from));</span>
+            InternetAddress[] address = {new InternetAddress(to)};
+            <span class="hlt">msg.setRecipients(Message.RecipientType.TO, address);</span>
+            msg.setSubject("Test E-Mail through Java");
+            msg.setSentDate(new Date());
+
+            // Set message content
+            <span class="hlt">msg.setText("This is a test of sending a " +
+                        "plain text e-mail through Java.\n" +
+                        "Here is line 2.");</span>
+
+            //Send the message
+            <span class="hlt">Transport.send(msg);</span>
+        }
+        catch (MessagingException mex) {
+            // <span class="hlt">Prints all nested (chained) exceptions as well</span>
+            mex.printStackTrace();
+        }
+    }
+}//End of class</pre>
+
+</li></ul>
+
+
+
+
+
+<h2>Sample Code to Send Multipart E-Mail, HTML E-Mail and File Attachments</h2>
+
+<ul>
+
+<li>To compile and run, you must have <code>mail.jar</code> (from the JavaMail download) and <code>activation.jar</code> (from the JavaBeans Activation Framework download) in Java classpath.
+
+</li><li>You need to replace email addresses and mail server with your values where noted.
+
+</li><li>This sample code has debugging turned on ("mail.debug") to see what is going on behind the scenes in JavaMail code.<pre>import java.util.*;
+import java.io.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
+
+public class SendMailUsage {
+
+    public static void main(String[] args) {
+
+        // SUBSTITUTE YOUR EMAIL ADDRESSES HERE!!!
+        String to = "you@yourisp.net";
+        String from = "you@yourisp.net";
+        // SUBSTITUTE YOUR ISP'S MAIL SERVER HERE!!!
+        String host = "smtpserver.yourisp.net";
+
+        // Create properties for the Session
+        Properties props = new Properties();
+
+        // If using static Transport.send(),
+        // need to specify the mail server here
+        props.put("mail.smtp.host", host);
+        // To see what is going on behind the scene
+        props.put("mail.debug", "true");
+
+        // Get a session
+        Session session = Session.getInstance(props);
+
+        try {
+            // Get a Transport object to send e-mail
+            <span class="hlt">Transport bus = session.getTransport("smtp");</span>
+
+            // <span class="hlt">Connect only once here</span>
+            // <span class="hlt">Transport.send() disconnects after each send</span>
+            // Usually, no username and password is required for SMTP
+            <span class="hlt">bus.connect();</span>
+            //bus.connect("smtpserver.yourisp.net", "username", "password");
+
+            // Instantiate a message
+            Message msg = new MimeMessage(session);
+
+            // Set message attributes
+            msg.setFrom(new InternetAddress(from));
+            InternetAddress[] address = {new InternetAddress(to)};
+            msg.setRecipients(Message.RecipientType.TO, address);
+            // Parse a comma-separated list of email addresses. Be strict.
+            msg.setRecipients(Message.RecipientType.CC,
+                                InternetAddress.parse(to, true));
+            // Parse comma/space-separated list. Cut some slack.
+            msg.setRecipients(Message.RecipientType.BCC,
+                                InternetAddress.parse(to, false));
+
+            msg.setSubject("Test E-Mail through Java");
+            msg.setSentDate(new Date());
+
+            // Set message content and send
+            setTextContent(msg);
+            <span class="hlt">msg.saveChanges();</span>
+            <span class="hlt">bus.sendMessage(msg, address);</span>
+
+            setMultipartContent(msg);
+            msg.saveChanges();
+            bus.sendMessage(msg, address);
+
+            setFileAsAttachment(msg, "C:/WINDOWS/CLOUD.GIF");
+            msg.saveChanges();
+            bus.sendMessage(msg, address);
+
+            setHTMLContent(msg);
+            msg.saveChanges();
+            bus.sendMessage(msg, address);
+
+            <span class="hlt">bus.close();</span>
+
+        }
+        catch (MessagingException mex) {
+            // Prints all nested (chained) exceptions as well
+            mex.printStackTrace();
+            // How to access nested exceptions
+            while (mex.getNextException() != null) {
+                // Get next exception in chain
+                Exception ex = mex.getNextException();
+                ex.printStackTrace();
+                if (!(ex instanceof MessagingException)) break;
+                else mex = (MessagingException)ex;
+            }
+        }
+    }
+
+
+
+    // A simple, <span class="hlt">single-part text/plain e-mail.</span>
+    public static void setTextContent(Message msg) throws MessagingException {
+            // Set message content
+            String mytxt = "This is a test of sending a " +
+                            "plain text e-mail through Java.\n" +
+                            "Here is line 2.";
+            msg.setText(mytxt);
+
+            // Alternate form
+            msg.setContent(mytxt, "text/plain");
+
+    }
+
+
+
+    // A simple <span class="hlt">multipart/mixed e-mail. Both body parts are text/plain.</span>
+    public static void setMultipartContent(Message msg) throws MessagingException {
+        // Create and fill first part
+        <span class="hlt">MimeBodyPart p1 = new MimeBodyPart();
+        p1.setText("This is part one of a test multipart e-mail.");</span>
+
+        // Create and fill second part
+        MimeBodyPart p2 = new MimeBodyPart();
+        // Here is how to set a charset on textual content
+        p2.setText("This is the second part", "us-ascii");
+
+        // Create the Multipart.  Add BodyParts to it.
+        <span class="hlt">Multipart mp = new MimeMultipart();
+        mp.addBodyPart(p1);</span>
+        mp.addBodyPart(p2);
+
+        // Set Multipart as the message's content
+        <span class="hlt">msg.setContent(mp);</span>
+    }
+
+
+
+    // Set a <span class="hlt">file as an attachment.</span>  Uses JAF FileDataSource.
+    public static void setFileAsAttachment(Message msg, String filename)
+             throws MessagingException {
+
+        // Create and fill first part
+        MimeBodyPart p1 = new MimeBodyPart();
+        p1.setText("This is part one of a test multipart e-mail." +
+                    "The second part is file as an attachment");
+
+        // Create second part
+        MimeBodyPart p2 = new MimeBodyPart();
+
+        // Put a file in the second part
+        <span class="hlt">FileDataSource fds = new FileDataSource(filename);
+        p2.setDataHandler(new DataHandler(fds));
+        p2.setFileName(fds.getName());</span>
+
+        // Create the Multipart.  Add BodyParts to it.
+        Multipart mp = new MimeMultipart();
+        mp.addBodyPart(p1);
+        mp.addBodyPart(p2);
+
+        // Set Multipart as the message's content
+        msg.setContent(mp);
+    }
+
+
+
+    // Set a single part <span class="hlt">html content.</span>
+    // Sending data of any type is similar.
+    public static void setHTMLContent(Message msg) throws MessagingException {
+
+        <span class="hlt">String html = "&lt;html&gt;&lt;head&gt;&lt;title&gt;" +
+                        msg.getSubject() +
+                        "&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;" +
+                        msg.getSubject() +
+                        "&lt;/h1&gt;&lt;p&gt;This is a test of sending an HTML e-mail" +
+                        " through Java.&lt;/body&gt;&lt;/html&gt;";</span>
+
+        // HTMLDataSource is an inner class
+        <span class="hlt">msg.setDataHandler(new DataHandler(new HTMLDataSource(html)));</span>
+    }
+
+
+
+    /*
+     * <span class="hlt">Inner class to act as a JAF datasource to send HTML e-mail content</span>
+     */
+    static class HTMLDataSource implements DataSource {
+        private String html;
+
+        public HTMLDataSource(String htmlString) {
+            html = htmlString;
+        }
+
+        // Return html string in an InputStream.
+        // <span class="hlt">A new stream must be returned each time.</span>
+        public InputStream <span class="hlt">getInputStream()</span> throws IOException {
+            if (html == null) throw new IOException("Null HTML");
+            return new ByteArrayInputStream(html.getBytes());
+        }
+
+        public OutputStream getOutputStream() throws IOException {
+            throw new IOException("This DataHandler cannot write HTML");
+        }
+
+        public String <span class="hlt">getContentType()</span> {
+            return "text/html";
+        }
+
+        public String getName() {
+            return "JAF text/html dataSource to send e-mail only";
+        }
+    }
+
+} //End of class</pre>
+
+</li></ul>
+
+
+
+
+<h2>Sample Code to Fetch E-Mail</h2>
+
+<ul>
+
+<li>To compile and run, you must have <code>mail.jar</code> (from the JavaMail download) and <code>activation.jar</code> (from the JavaBeans Activation Framework download) in Java classpath.
+
+</li><li>You need to replace mail server, username and password with your values where noted.
+
+</li><li>This sample code has debugging turned on ("mail.debug") to see what is going on behind the scenes in JavaMail code.<pre>import java.util.*;
+import java.io.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.mail.search.*;
+import javax.activation.*;
+
+
+public class FetchMailUsage {
+
+    public static void main(String[] args) {
+
+        // <span class="hlt">SUBSTITUTE YOUR ISP's POP3 SERVER HERE!!!</span>
+        String host = "pop.yourisp.net";
+        // <span class="hlt">SUBSTITUTE YOUR USERNAME AND PASSWORD TO ACCESS E-MAIL HERE!!!</span>
+        String user = "your_username";
+        String password = "your_password";
+        // <span class="hlt">SUBSTITUTE YOUR SUBJECT SUBSTRING TO SEARCH HERE!!!</span>
+        String subjectSubstringToSearch = "Test E-Mail through Java";
+
+        // Get a session.  <span class="hlt">Use a blank Properties object.</span>
+        Session session = Session.getInstance(new Properties());
+
+        try {
+
+            // Get a Store object
+            <span class="hlt">Store store = session.getStore("pop3");
+            store.connect(host, user, password);</span>
+
+            // Get "INBOX"
+            <span class="hlt">Folder fldr = store.getFolder("INBOX");
+            fldr.open(Folder.READ_WRITE);</span>
+            int count = fldr.getMessageCount();
+            System.out.println(count  + " total messages");
+
+            // <span class="hlt">Message numebers start at 1</span>
+            for(int <span class="hlt">i = 1; i &lt;= count</span>; i++) {
+								// <span class="hlt">Get  a message by its sequence number</span>
+                <span class="hlt">Message m = fldr.getMessage(i);</span>
+
+                // Get some headers
+                Date date = m.getSentDate();
+                Address [] from = m.getFrom();
+                String subj = m.getSubject();
+                String mimeType = m.getContentType();
+                System.out.println(date + "\t" + from[0] + "\t" +
+                                    subj + "\t" + mimeType);
+            }
+
+            // Search for e-mails by some subject substring
+            <span class="hlt">String pattern = subjectSubstringToSearch;
+            SubjectTerm st = new SubjectTerm(pattern);
+            // Get some message references
+            Message [] found = fldr.search(st);</span>
+
+            System.out.println(found.length +
+                                " messages matched Subject pattern \"" +
+                                pattern + "\"");
+
+            for (int i = 0; i &lt; found.length; i++) {
+                Message m = found[i];
+                // Get some headers
+                Date date = m.getSentDate();
+                Address [] from = m.getFrom();
+                String subj = m.getSubject();
+                String mimeType = m.getContentType();
+                System.out.println(date + "\t" + from[0] + "\t" +
+                                    subj + "\t" + mimeType);
+
+                Object o = m.getContent();
+                <span class="hlt">if (o instanceof String)</span> {
+                    System.out.println("**This is a String Message**");
+                    System.out.println((String)o);
+                }
+                else <span class="hlt">if (o instanceof Multipart)</span> {
+                    System.out.print("**This is a Multipart Message.  ");
+                    <span class="hlt">Multipart mp = (Multipart)o;</span>
+                    int count3 = mp.getCount();
+                    System.out.println("It has " + count3 +
+                        " BodyParts in it**");
+                    for (int j = 0; j &lt; count3; j++) {
+                        // <span class="hlt">Part are numbered starting at 0</span>
+                        <span class="hlt">BodyPart b = mp.getBodyPart(j);</span>
+                        String mimeType2 = b.getContentType();
+                        System.out.println( "BodyPart " + (j + 1) +
+                                            " is of MimeType " + mimeType);
+
+                        Object o2 = b.getContent();
+                        if (o2 instanceof String) {
+                            System.out.println("**This is a String BodyPart**");
+                            System.out.println((String)o2);
+                        }
+                        else if (o2 instanceof Multipart) {
+                            System.out.print(
+                                "**This BodyPart is a <span class="hlt">nested Multipart.</span>  ");
+                            Multipart mp2 = (Multipart)o2;
+                            int count2 = mp2.getCount();
+                            System.out.println("It has " + count2 +
+                                "further BodyParts in it**");
+                        }
+                        else if (o2 instanceof InputStream) {
+                            System.out.println(
+                                "**This is an InputStream BodyPart**");
+                        }
+                    } //End of for
+                }
+                else <span class="hlt">if (o instanceof InputStream)</span> {
+                    System.out.println("**This is an InputStream message**");
+                    InputStream is = (InputStream)o;
+                    // Assumes character content (not binary images)
+                    int c;
+                    while ((c = is.read()) != -1) {
+                        System.out.write(c);
+                    }
+                }
+
+                // <span class="hlt">Uncomment to set "delete" flag on the message
+                //m.setFlag(Flags.Flag.DELETED,true);</span>
+
+            } //End of for
+
+            // <span class="hlt">"true" actually deletes flagged messages from folder
+            fldr.close(true);
+            store.close();</span>
+
+        }
+        catch (MessagingException mex) {
+            // Prints all nested (chained) exceptions as well
+            mex.printStackTrace();
+        }
+        catch (IOException ioex) {
+            ioex.printStackTrace();
+        }
+
+    }
+
+
+} //End of class</pre>
+
+</li></ul>
+
+
+
+
+<h2>Useful Classes and Interfaces</h2>
+
+<ul>
+
+
+<li>A <code>Session</code> object authenticates the user and controls access to the mail servers.  The <span class="hlt">Session class is a final concrete class. It cannot be subclassed.</span>  By calling the appropriate factory method on a Session object, you can <span class="hlt">obtain Transport and Store objects</span> which support specific protocols to send or fetch e-mail respectively.
+
+</li><li>You <span class="hlt">convert e-mail address strings such as "user@domain.com" into an <code>InternetAddress</code> object</span> to use it with JavaMail.  The InternetAddress class extends the abstract <code>Address</code> class to come up with an <span class="hlt"><code>"rfc822"</code> type address.</span><pre>public class InternetAddress extends Address implements Cloneable
+ <i>where:</i>
+ public abstract class Address extends Object implements Serializable</pre>
+
+
+
+
+</li><li>You <span class="hlt">construct an e-mail message as an object of the <code>MimeMessage</code> class.</span><pre>public class MimeMessage extends Message <span class="hlt">implements MimePart</span>
+  <i>where</i>
+  public abstract class Message extends Object implements Part
+  public interface <span class="hlt">MimePart extends Part</span>
+  public interface Part</pre>
+
+<p><span class="hlt">All Java e-mails are of <code>Message</code> type.</span>
+
+</p></li><li>Each Message object has a content.  The content can either be a multipart content or not.
+
+</li><li>A simple content is just some plain text, for example.  There is no special class for simple (non-multipart) content.  You <span class="hlt">just say <code>msg.setText(textString)</code>.</span>
+
+</li><li><span class="hlt"><code>MimeMultipart</code> class handles multipart content</span> which adheres to the MIME specifications.<pre>public class MimeMultipart extends Multipart
+ <i>where:</i>
+ public abstract class <span class="hlt">Multipart extends Object</span></pre>
+
+<p>You <span class="hlt">create a new MimeMultipart object by invoking its default constructor.</span>
+
+</p><p><b>When you get <span class="hlt">content of an multipart e-mail</span>, it <span class="hlt"><i>always</i> returns an object of this type.</span></b>
+
+
+
+</p></li><li>MimeMultipart acts as a container for multiple parts to be sent in the e-mail.  <span class="hlt">Each part is of type <code>MimeBodyPart</code>.</span><pre>public class MimeBodyPart extends BodyPart <span class="hlt">implements MimePart</span>
+  <i>where:</i>
+  public abstract class BodyPart extends Object implements Part
+  public interface Part</pre>
+
+<p>MimeMultipart's <code>getBodyPart(int index)</code> method returns the MimeBodyPart object at the given index. <span class="hlt">Index starts at 0.</span>  The <code>addBodyPart(...)</code> method adds a new MimeBodyPart object to it as a step towards constructing a new multipart MimeMessage.
+
+</p><p><span class="hlt">Each <i>Bodypart</i> type object can contain either a JAF <code>DataHandler</code> object or another (nested) <i>Multipart</i> type object.  So, check the content-type of each BodyPart before using it in your code.</span>
+
+</p><p>To extract a nested <i>Multipart</i> type object from a <i>MimePart</i> containing a ContentType attribute set to "multipart/*", use the <i>MimePart</i>'s <code>getContent()</code> method.  Its <code>getSubType</code> method returns the multipart message MIME subtype.  The subtype
+defines the relationship among the individual body parts of a multipart message.
+
+</p></li><li>If the content of a Message object is an instance of the Multipart class, it means that you need to <span class="hlt">cast the content into a Multipart and look for BodyPart type objects within the resulting object</span> to access each individual part.
+
+</li><li><span class="hlt">Another Message object can not be contained directly in a Multipart object, it must be embedded in a BodyPart first.</span>
+
+
+</li><li>Each <i>Message</i> or <i>BodyPart</i> type object also has some <i>attributes</i>.
+
+</li><li><span class="hlt">A <i>Message</i>'s attributes can be <i>From, To, Subject, Reply-To</i> etc.  You can also add non-standard attributes as <i>headers</i>.</span>
+
+</li><li><span class="hlt">A <i>BodyPart</i> type object does not have attributes that set From, To, Subject, ReplyTo, or other address header fields.</span>
+
+</li><li>Messages are stored in <code>Folder</code> objects which may also contain subfolders.  <span class="hlt">All mail servers have the folder named "INBOX".</span>
+  The Folder class declares methods that fetch, append, copy and delete 
+messages.  A Folder object can also send events to components registered
+ as event listeners.
+  <ul>
+  <li>"fldr.getType" returns whether a Folder can hold subfolders, messages, or both.
+  </li><li>"store.getDefaultFolder" returns the root folder.
+
+  </li><li>"fldr.list" returns all the subfolders under that folder.
+
+  </li><li><span class="hlt">"fldr.getFolder(folderName)"</span> returns the named subfolder.  This subfolder need not exist physically in the store.
+
+  </li><li>"fldr.exists" indicates whether this folder exists.
+
+  </li><li>"store.create" creates a folder
+
+  </li><li>A closed Folder object allows deleting and renaming the 
+folder, listing and  creating subfolders, and monitoring for new 
+messages.
+
+  </li><li>"fldr.open" opens a Folder object (only if it can contain 
+messages).  You cannot call "open", "delete" and "renameTo" on an open 
+folder.
+  </li></ul>
+
+</li><li>Folders are stored in a database accessed by a <span class="hlt"><code>Store</code> class</span> which <span class="hlt">requires username, and password to connect to the database.</span>  As a user, you will first connect to the mail server by calling one of the <span class="hlt">three <code>connect(...)</code> methods on a Store class</span>, specifying the server to access, username and password.
+
+</li><li>Messages stored within a Folder object are <span class="hlt">sequentially numbered, <b>starting at 1</b>.</span> Calling <code>msg.getMessageNumber()</code>
+ returns its sequence number.  You can reference a message either by its
+ sequence number or by the corresponding Message object itself.
+
+<p><span class="hlt">When messages marked as deleted are actually purged, the remaining messages are renumbered.</span>  So there is no guarantee that a message will always have the same message number in a folder.   <span class="hlt">Since a sequence number can change within a session, use references to Message <i>objects</i> rather than sequence numbers as cached references to messages.</span>
+
+</p></li><li>Use <code>FetchProfile</code> to selectively retrieve message attributes/content for efficiency:<pre>Message[] msgs = folder.getMessages();
+
+<span class="hlt">FetchProfile fp = new FetchProfile();</span>
+// ENVELOPE, CONTENT_INFO and/or FLAGS
+// ENVELOPE:  From, To, Cc, Bcc, ReplyTo, Subject and Date
+// CONTENT_INFO: Type, Disposition, Description, Size and LineCount
+// FLAGS: Flags set on this message
+<span class="hlt">fp.add(FetchProfile.Item.ENVELOPE);</span>
+// Add a specific header field to the list of attributes to be prefetched
+fp.add("X-mailer");
+
+<span class="hlt">folder.fetch(msgs, fp);</span>
+for (int i = 0; i &lt; folder.getMessageCount(); i++) {
+  display(msgs[i].getFrom());
+  display(msgs[i].getSubject());
+  display(msgs[i].getHeader("X-mailer"));
+}</pre>
+
+
+
+
+</li></ul>
+
+
+
+
+
+
+
+<h2>Steps to Use JavaMail</h2>
+
+<ul>
+
+<li>First, get the Session object:<pre>Properties props = new Properties();
+// From system properties
+//Properties props = System.getProperties();
+
+// Get the shared Session object
+Session session = Session.getDefaultInstance(props);
+// Get an unshared Session object
+Session session = Session.getInstance(props);
+</pre>
+
+<p>The "props" Properties file contains mail protocols to use, mail host
+ and port to connect to, username etc. which will be used later to 
+connect to the mail server.  <span class="hlt"><b>It can be blank</b> although you may want to set <code>mail.store.protocol</code>, <code>mail.transport.protocol</code>, <code>mail.host</code>, <code>mail.user</code> and <code>mail.from</code> properties.  Passwords can not be specified using properties.</span>  Here are the various properties that can be in the Properties object and what they do:
+
+  </p><ul>
+  <li><b>mail.store.protocol</b>:  Default protocol to fetch messages.
+  </li><li><b>mail.transport.protocol</b>: Default protocol to send messages.
+  </li><li><b>mail.<i>protocol</i>.host</b>:  Protocol-specific default mail server such as <code>mail.smtp.host=smtp2.yourisp.com</code>.  Defaults to what's in "mail.host" property (see next).
+
+  </li><li><b>mail.host</b>: Default mail server for both sending and receiving email.
+
+  </li><li><b>mail.user</b>:  Mail server username.  Defaults to the JVM system property <code>user.name</code>.  The Store and Transport objects' <i>connect()</i>
+ method uses this property to send the username to the mail server, if 
+the protocol-specific username property is absent (see next).
+
+  </li><li><b>mail.<i>protocol</i>.user</b>:  Protocol-specific default username for connecting to the mail server.  Defaults to what's in "mail.user" property.
+
+
+  </li><li><b>mail.from</b>:  Specifies the return address of the current
+  user. Used by the <code>InternetAddress.getLocalAddress</code> method to specify the current user&#8217;s email address.  Defaults to <code>username@host</code>.
+
+  </li><li><span class="hlt"><b>mail.debug</b>: If specified as "true" string, prints messages to System.out showing various protocol commands being issued behind the scenes.</span>
+  Default is "false".  You can override it later with "Session.setDebug"
+ method but then, debug messages will only be turned on from that point 
+onwards and you will miss the session creation messages.
+  </li></ul>
+
+
+</li><li><h3>Sending E-Mail</h3>
+
+  <ol>
+
+  <li>Instantiate a new message:<pre>  Message msg = new MimeMessage(session);</pre>
+
+  </li><li>Set message's attributes:<pre>  InternetAddress[] toAddrs = new InternetAddress[1];
+  toAddrs[0] = new InternetAddress("your@buddy.com");
+  Address fromAddr = new InternetAddress("you@home.com");
+  msg.setFrom(fromAddr);
+  msg.setRecipients(Message.RecipientType.TO, toAddrs);
+  msg.setSubject("Test Email");
+  msg.setSentDate(new Date());
+  // Custom header other than pre-defined ones
+  msg.setHeader("content-type", "text/plain");</pre>
+
+  </li><li>Set message's content:<pre>  msg.setText("This is a test message");
+  // Or, for other content types, e.g.
+  msg.setContent("This is a test message", "text/plain");</pre>
+
+    <ol>
+
+    <li><span class="hlt">To create MIME multipart content, first instantiate a <code>MimeMultipart</code> object.</span>  The default subtype of a multipart content is "mixed".  You can specify <span class="hlt">other subtypes such as "alternative", "related", "parallel" and "signed".</span><pre>    Multipart mp = new MimeMultipart();
+    // Some other subtype
+    //Multipart mp = new MimeMultipart("alternative");</pre>
+
+    </li><li>Instantiate and set content of <code>MimeBodyPart</code> objects<pre>    BodyPart b1 = new MimeBodyPart();
+    b1.setContent("Spaceport Map","text/plain");
+
+    BodyPart b2 = new MimeBodyPart();
+    // Map is some binary postscript file
+    b2.setContent(map,"application/postscript");</pre>
+
+    </li><li>Add <code>BodyPart</code> objects to <code>Multipart</code> object<pre>    mp.addBodyPart(b1);
+    mp.addBodyPart(b2);</pre>
+
+    </li><li>Finally, set the <code>Multipart</code> object as the message's content<pre>    msg.setContent(mp); // This form takes a Multipart object</pre>
+
+    </li></ol>
+
+  </li><li>Send the message
+
+    <ul>
+
+    <li><span class="hlt"><b>Automatic Procedure</b></span>:<pre>    <span class="hlt">Transport.send(msg);</span>
+    // <span class="hlt">Ignore recipient addresses in the Message object, specify your own</span>
+    Transport.send(msg, recipientAddressesArray);</pre>
+
+    <p>This is a convenience <i>static</i> method.  It <span class="hlt">does
+ not allow registering event listeners with the Transport object.  
+Depending on each recipient's address type, it instantiates the 
+appropriate Transport subclass, calls <code>msg.saveChanges()</code> and calls <code>transportObject.sendMessage(msg)</code>.</span>
+
+    </p></li><li><b>Manual Procedure</b>:
+      <ol>
+
+      <li><span class="hlt">Ensure that proper message headers are updated:</span><pre>      msg.saveChanges();</pre>
+
+      </li><li>Get a Transport object specific to the send protocol (usually "smtp")<pre>      // Use provider configuration file
+      Transport bus = session.getTransport("smtp");
+      // Use address type to protocol mapping file
+      //Transport bus = session.getTransport(address);
+      // Use session properties to get default protocol
+      //Transport bus = session.getTransport();</pre>
+
+      </li><li><span class="hlt">Register event listeners if you want:</span><pre>      // Add a class implementing the appropriate listener interface
+      bus.addConnectionListener(this); // this implements ConnectionListener
+      bus.addTransportListener(this);  // this implements TransportListener</pre>
+
+      </li><li>Make recipient address array:<pre>      Address [] addresses = msg.getAllRecipients();
+      // Or, Make your own
+      Address [] addresses = {
+                                new InternetAddress("you@me.com"),
+                                new InternetAddress("me@you.com"),
+                             };</pre>
+
+      </li><li>Send the message:<pre>      bus.sendMessage(msg, addresses);</pre>
+
+      </li></ol>
+
+    </li></ul>
+
+  </li><li><span class="hlt">Optionally, write the message out to a bytestream (may be to save as a draft on disk</span>, for example):<pre>  msg.writeTo(someOutputStream);</pre>
+
+  </li></ol>
+
+
+
+
+
+
+
+</li><li><h3>Fetching E-Mail</h3>
+  <ol>
+  <li>Get the Store object:<pre>  // Gets protocol from session properties
+  Store store = session.getStore();
+  // Store for a non-default protocol
+  Store store = <span class="hlt">session.getStore("pop3");</span></pre>
+
+
+  </li><li>Connect to the store:<pre>  //Uses session properties
+  store.connect();
+  //uses default port, hostString is like "mail.yourisp.com"
+  <span class="hlt">store.connect(hostString, username, password);</span>
+  //uses specific port, -1 means default
+  store.connect(hostString, portNumberInteger username, password);</pre>
+
+  </li><li>List folders in the store and list/view messages in a folder:<pre>  // get the INBOX folder  (All stores usually have this one)
+  <span class="hlt">Folder inbox = store.getFolder("INBOX");</span>
+  // open the INBOX folder
+  inbox.open(Folder.READ_WRITE);
+  Message m = inbox.getMessage(1); // get Message #1</pre>
+
+  </li><li>Get a message's attributes:<pre>  // Get the subject attribute
+  String subject = m.getSubject();</pre>
+
+  </li><li>Return the MIME type of a message's content:<pre>  String mimeType = m.getContentType();</pre>
+
+  </li><li>Get a message's content:<pre>  <span class="hlt">Object o = m.getContent();</span></pre>
+
+  </li><li>The type of the returned object depends on the type of the actual content.
+    <ul>
+    <li><span class="hlt">A "text/plain" content usually returns a String object.</span>
+    </li><li><span class="hlt">A "multipart/<i>%lt;whatever here&gt;</i>" object always returns a <code>Multipart</code> object or its subclass.</span>
+    </li><li><span class="hlt">For unknown content types, any mail-specific encodings are decoded and an <code>InputStream</code> object is returned.</span>
+    </li></ul><pre>    if (o instanceof String) {
+      System.out.println("This is a String");
+      System.out.println((String)o);
+    }
+    else if (o instanceof Multipart) {
+      System.out.println("This is a Multipart");
+      Multipart mp = (Multipart)o;
+      int count = mp.getCount();
+      for (int i = 0; i &lt; count; i++) {
+        BodyPart b = mp.getBodyPart(i);
+        mp.removeBodyPart(b);
+        // Or, simply
+        //mp.removeBodyPart(i);
+        mp.addBodyPart(b);
+      }
+    }
+    else if (o instanceof InputStream) {
+      System.out.println("This is just an input stream");
+      InputStream is = (InputStream)o;
+      int c;
+      while ((c = is.read()) != -1) {
+        System.out.write(c);
+      }
+    }</pre>
+
+  </li><li><span class="hlt">When done, close all open folders and then, the store</span>:<pre>  inbox.close(); // Close the INBOX
+  store.close(); // Close the Store</pre>
+  </li></ol>
+
+</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+<h2>Utility Classes</h2>
+
+<ul>
+
+<li>You can <span class="hlt">use the <code>MimeUtility</code> class to convert non-US-ASCII headers and content to mail-safe format.  <b>Remember to do it before calling <code>setHeader(), addHeader()</code> and <code>addHeaderLine()</code> methods</b>.
+  In addition, these header fields must be folded (wrapped) before being
+ sent if they exceed the line length limitation for the transport (1000 
+bytes for SMTP).</span> Received headers may have been folded. Your  application is responsible for folding and unfolding headers as appropriate.
+
+
+</li><li><span class="hlt">All methods in <code>MimeUtility</code> utility class are static methods.</span>
+  <ul>
+
+  <li><code>getEncoding()</code> takes a JAF DataSource object and 
+returns the Content-Transfer-Encoding that should be applied to the data
+ in that DataSource object to make it mail-safe.
+
+  </li><li><code>encode()</code> wraps an encoder around the given output stream based on the specified Content-Transfer-Encoding.
+
+  </li><li><code>decode()</code> decodes the given input stream, based on the specified Content-Transfer-Encoding.
+
+  </li><li>Since <span class="hlt">RFC 822 prohibits non US-ASCII characters in headers</span>, you should first call <code>MimeUtility.encodeText()</code> method on the header names and values, and then call <code>setHeader(), addHeader()</code> or <code>addHeaderLine()</code> methods on the encoded strings.  It encodes header values only if they contain non US-ASCII characters.<pre>  MimePart part = ...
+  String rawvalue = "FooBar Mailer, Japanese version 1.1"
+  part.setHeader("X-mailer", MimeUtility.encodeText(rawvalue));</pre>
+
+
+  </li><li>Similarly, call <code>MimeUtility.decodeText</code> method on
+ header values obtained from a MimeMessage or MimeBodyPart using the 
+"getHeader" set of methods.  This method takes a header value, applies 
+RFC 2047 decoding standards, and returns the decoded value as a Unicode 
+String.  You should always run header values through the decoder to be 
+safe.<pre>  MimePart part = ...
+  String rawvalue = part.getHeader("X-mailer")[0]);
+  String  value = null;
+  if ((rawvalue != null) {
+     value = MimeUtility.decodeText(rawvalue);
+  }</pre>
+
+  </li></ul>
+
+</li><li>The <span class="hlt"><code>ContentType</code> class is a utility class that can parse received MIME content-type headers and also generate new MIME content-type headers.</span><pre>Multipart part = ...;
+String type = part.getContentType();
+ContentType cType = new ContentType(type);
+if (<span class="hlt">cType.match("application/x-foobar")</span>) {
+  // Extract a MIME parameter
+  iString color = cType.getParameter("color");
+}
+
+ContentType cType2 = new ContentType();
+cType2.setPrimaryType("application");
+cType2.setSubType("x-foobar");
+cType2.setParameter("color", "red");
+// Construct a MIME Content-Type value
+String contentType = cType2.toString();</pre>
+
+</li></ul>
+
+
+
+
+
+<h2>Message Flags</h2>
+
+<ul>
+
+<li>If a folder supports the special <code>USER</code> flag, you can set arbitrary user-definable flags on any message belonging to this folder.  Other  flags are:
+  <ul>
+  <li><span class="hlt">ANSWERED</span>: Message has been answered.
+  </li><li>DRAFT: Message is a draft.
+  </li><li><span class="hlt">FLAGGED</span>: Mark a message as flagged.
+  </li><li><span class="hlt">RECENT</span>: This message is newly 
+arrived in this folder. This flag is set when the message is first 
+delivered into the folder and cleared when the containing folder is 
+closed. <span class="hlt">Clients cannot set this flag.</span>
+  </li><li>SEEN: Marks a message that has been opened.  It gets set when the message contents are retrieved.
+  </li><li><span class="hlt">DELETED</span>: Allows undoable message 
+deletion. Setting this flag for a message marks it deleted but does not 
+physically remove the message from its folder. The client calls the 
+expunge method on a folder to remove all deleted messages in that 
+folder.
+  </li></ul>
+
+</li><li>Methods to operate on flags of a message<pre>// Get current flags set on a message
+<span class="hlt">Flags msgFlags = msg.getFlags();</span>
+
+// <span class="hlt">Get all supported flags by this folder</span>
+Flags allowedFlags = fldr.getPermanentFlags();
+
+// Check if a Flags object contains a flag
+allowedFlags.contains(flagToCheck);
+
+// Add a flag to a set of flags using a Flags.Flag object
+msgFlags.add(flagToAdd);
+
+// Set the flags on a message
+<span class="hlt">msg.setFlags(msgFlags, isToBeSet);</span></pre>
+
+
+
+</li></ul>
+
+
+
+
+
+<h2>JavaMail Events</h2>
+
+<ul>
+
+<li>JavaMail uses JDK 1.1 type event-handling mechanism.  You can <span class="hlt">register your class as listeners to subclasses of <code>MailEvent</code> class. The <i>Transport, Store and Folder</i> classes generate such events.</span>
+
+</li><li><span class="hlt">A Transport object generates <code>ConnectionEvent</code> and <code>TransportEvent</code>.</span>  If the transport object connects successfully, it will fire the <i>ConnectionEvent</i> with the type set to <code>OPENED</code>. If the connection times out or is closed, ConnectionEvent with type <code>CLOSED</code> is generated.  The <i>sendMessage</i> method of a Transport object generates a <span class="hlt"><i>TransportEvent</i> which contains information about the method&#8217;s success or failure.</span> The event object contains three arrays of address arrays: <code>validSent[], validUnsent[] and invalid[]</code>:
+  <ol>
+  <li><span class="hlt"><code>MESSAGE_DELIVERED</code>:  Message sent to all recipients successfully.  <i>validSent[]</i> contains all the addresses. <i>validUnsent[]</i> and <i>invalid[]</i> are null.
+  </span></li><li><code>MESSAGE_NOT_DELIVERED</code>:  When <i>ValidSent[]</i> is null, the message was not successfully sent to any recipients. <i>validUnsent[]</i> may have addresses that are valid. <i>invalid[]</i> may contain invalid addresses.
+  </li><li><code>MESSAGE_PARTIALLY_DELIVERED</code>:  Message was successfully sent to some recipients but not to all. <i>ValidSent[]</i> holds addresses of recipients to whom the message was sent. <i>validUnsent[]</i> holds valid addresses but the message wasn't sent to them. <i>invalid[]</i> holds invalid addresses.
+  </li></ol>
+
+
+</li><li>A Store object generates <code>ConnectionEvent</code> (generated on a successful connection or close), <code>StoreEvent</code> (<code>event.getMessageType</code> method returns either <code>ALERT</code> or <code>NOTICE</code>), <code>FolderEvent</code> (upon creation, deletion or renaming of a Folder).
+
+</li><li>A Folder object generates <code>ConnectionEvent</code> (a Folder is opened or closed), <code>FolderEvent</code> (this folder creates, deletes or renames) and <code>MessageCountEvent</code> (message count has changed, <i>expunged Message objects are in the event</i>).
+
+
+</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>More on JavaMail's Internal Workings</h2>
+
+<ul>
+
+<li><span class="hlt">JavaMail supports simultaneous multiple sessions 
+and each session can access multiple message stores and transports.  In a
+ JVM, multiple applications can share the same default mail session.</span>
+  This way, only one application needs to have the information and code 
+necessary to connect to a mail server and authenticate the user.  Other 
+applications then simply call send or fetch methods.
+
+
+</li><li>Session object's <code>getInstance(...), getDefaultInstance(...), getStore(...)</code> and <code>getTransport(...)</code> methods look for your configured javaMail implementations in <span class="hlt">two text files named <code>javamail.providers</code> and <code>javamail.default.providers</code>.</span>
+
+<p><b><span class="hlt">Usually, you don't need to do anything because the default providers in <i>mail.jar</i> file are sufficient.</span></b>
+
+</p></li><li>The lines in these files specify which Java class to use for which protocol.  <span class="hlt">Sample <i>javamail.providers</i> file:</span><pre><span class="hlt">protocol=imap; type=store; class=com.sun.mail.imap.IMAPStore; vendor=SunMicrosystems,Inc;
+protocol=smtp; type=transport;class=com.sun.mail.smtp.SMTPTransport;</span></pre>
+
+</li><li>It <span class="hlt">searches for configured implementations as follows:</span>
+  <ol>
+
+  <li>First, using the <i>java.home</i> system property, it looks for the wanted protocol's configuration in the <code><i>java.home</i>/lib/javamail.providers</code> file.  <span class="hlt">There can be one such file per JVM.</span>
+
+  </li><li>If the above file does not exist or the wanted protocol is 
+not found in the above file, it looks for the wanted protocol's 
+configuration in the <code>META-INF/javamail.providers</code> file in your application's directory or JAR file.  <span class="hlt">There can be one such file per application.</span>
+
+  </li><li>If the above file does not exist or the wanted protocol is 
+not found in the above file, it looks for the wanted protocol's 
+configuration in the <code>META-INF/javamail.default.providers</code> file in JavaMail's <code>mail.jar</code> file. <span class="hlt"> There can be one such file per JavaMail installation.</span>
+
+  </li></ol>
+
+</li><li>For a specific protocol, the <span class="hlt">first provider listed wins and is used by default.  You can change the default by setting the <code>mail.<i>protocol</i>.class</code> property to the class name you want when you create the Session object. <pre>props.put("mail.smtp.class", "com.acme.SMTPTRANSPORT");
+Session session = Session.getInstance(props, null);</pre>
+
+<p>Or, you can <span class="hlt">change it later using Session's <code>getProviders(), getProvider() and setProvider()</code> methods.</span></p><pre>// Find out which implementations are available
+Provider[] providers = session.getProviders();
+// Pick a provider
+Provider yourPick = providers[5]; // For example
+// Then, set a provider
+session.setProvider(yourPick);
+</pre>
+
+<p><b><span class="hlt">A <i>Provider</i> object cannot be explicitly created</span></b>; it must be retrieved using the <i>session.getProviders()</i> method and it must be one of those configured in the resource files.
+
+</p><p><span class="hlt">The providers in your files are added before the ones that come in <i>mail.jar</i>'s default files.  All are available from your code via the <i>session.getProviders()</i> method.</span>
+
+
+
+
+
+
+</p></span></li><li><span class="hlt">JavaMail can instantiate the correct <i>Transport</i> object implementing the correct protocol based on the recipient's address.</span>  How does it do that?  It looks for address-type-to-protocol mapping in two text files named <code>javamail.address.map</code> and <code>javamail.default.address.map</code>.
+
+<p><b>Usually, you don't need to do anything because the default mappings in <i>mail.jar</i> file are sufficient.</b>
+
+</p></li><li>Each line of these files maps an address type to a transport protocol.  To determine an address type, use <code>javax.mail.Address.getType()</code> method to get the address type. For example, <pre>Address a = new InternetAddress("your@buddy.com");
+String addrType = a.getType(); // Returns "rfc822"</pre>
+
+<p>Two common address types are "rfc822" (InternetAddress class) and "news" (NewsAddress class).
+
+
+</p></li><li><span class="hlt">Sample <i>javamail.address.map</i>:<pre>rfc822=smtp
+news=nntp</pre>
+
+</span></li><li>It searches for configured mappings as follows (This is the same search order as for the <i>providers</i> file above):
+  <ol>
+
+  <li>First, using the <i>java.home</i> system property, it looks for the wanted address type's mapping in the <code><i>java.home</i>/lib/javamail.address.map</code> file.  There can be one such file per JVM.
+
+  </li><li>If the above file does not exist or the wanted address type 
+is not found in the above file, it looks for the wanted address type's 
+mapping in the <code>META-INF/javamail.address.map</code> file in your application's directory or JAR file.  There can be one such file per application.
+
+  </li><li>If the above file does not exist or the wanted address type 
+is not found in the above file, it looks for the wanted address type's 
+mapping in the <code>META-INF/javamail.default.address.map</code> file in JavaMail's <code>mail.jar</code> file.  There can be one such file per JavaMail installation.
+
+  </li></ol>
+
+
+</li><li><span class="hlt">Folders can also be accessed using <code>URLNames</code></span>
+ which may be constructed from strings specifying protocol, host, port, 
+file, username, password. RFC 1738 specifies the URL syntax for IP-based
+ protocols such as IMAP4 and  POP3. Specify -1 as port number to use the
+ default port.<pre>// Get a Store using the "scheme" part of the URL string
+Store s = session.getStore(URLName);
+// Or, directly
+// First gets a Store which uses the rest of URLName
+// to locate and instantiate Folder
+Folder f = session.getFolder(URLName);</pre>
+
+
+</li><li><b><span class="hlt">Proper ways to expunge a folder</span></b>:
+  <ol>
+  <li>Expunge the folder, close it. Reopen and refetch messages from that Folder.
+  </li><li><span class="hlt">Issue the "close" method with the "expunge" parameter set to "true".</span>
+  </li></ol>
+
+
+</li><li>You can <span class="hlt">search a <i>folder</i> (and, recursively, the entire store database) for the messages you are looking for.  The abstract <code>SearchTerm</code> class represents search terms.</span>  It has a single method: <code>public boolean match(Message msg); </code>  There are concrete subclasses of this class to search on subject, from, to etc. and to specify AND and OR criteria.
+
+<p>The Folder class supports searches on messages: </p><pre>public Message[] search(SearchTerm term)
+public Message[] search(SearchTerm term, Message[] msgs)</pre>
+
+
+</li><li>The content of a message is a collection of bytes. There is no 
+built-in knowledge in JavaMail of the data type or format of the message
+ content.  Instead, the <span class="hlt">"Message" class object interacts with its own content through</span> an intermediate layer - the <span class="hlt">JavaBeans Activation Framework</span>
+ (JAF). So, JavaMail uses JAF to handle access to data based on 
+data-type.  The out-of-the-box JAF provides two very simple JAF-aware 
+viewer beans: <b>Text Viewer</b> and <b>Image Viewer</b>. These beans 
+handle data where content-type has been set to text/plain or image/gif. 
+ JavaMail implementation providers (not you) need to write additional 
+viewers that support some of the basic content types seen on the 
+Internet such as text/html, multipart/mixed and message/rfc822.
+
+
+</li></ul>
+
+
+
+
+<h2>How E-Mail Works</h2>
+<ul>
+
+<li><span class="hlt">The first e-mail message with an "@" sign in the address was sent in 1971.</span>
+
+</li><li>An e-mail system consists of two different servers running on a server machine.  You connect to the <span class="hlt">SMTP</span> (Simple Mail Transfer Protocol) server on its <span class="hlt">well-known port number 25 to send e-mail</span> to others.  And, you connect to the <span class="hlt">POP3</span> (Post Office Protocol version 3) server on its <span class="hlt">well-known port number 110 to fetch the e-mail</span> you may have received.
+
+</li><li>The email program on your computer interacts with the two mail 
+servers at your ISP (Internet Service Provider) to send and fetch email.
+  The interaction is dead simple.  You compose your email and submit it 
+to your e-mail program.  Your email program connects over the Internet 
+to the mail server, asks you for a username and password (if necessary),
+ and supplies that to the mail server to authenticate you.  After 
+successful authentication, <span class="hlt">your e-mail program's interaction with an SMTP server goes something like this</span> (from <a href="http://www.howstuffworks.com/email.htm">HowStuffWorks.com</a>):<p>
+
+Your e-mail program:<code><span class="hlt">helo test</span></code><br>
+Mail server:<code><span class="hlt">250 mx1.mindspring.com Hello abc.sample.com<br>
+[220.57.69.37], pleased to meet you</span></code><br>
+Your e-mail program:<code><span class="hlt">mail from: test@sample.com</span></code><br>
+Mail server:<code><span class="hlt">250 2.1.0 test@sample.com... Sender ok</span></code><br>
+Your e-mail program:<code><span class="hlt">rcpt to: jsmith@mindspring.com</span></code><br>
+Mail server:<code><span class="hlt">250 2.1.5 jsmith... Recipient ok</span></code><br>
+Your e-mail program:<code><span class="hlt">data</span></code><br>
+Mail server:<code><span class="hlt">354 Enter mail, end with "." on a line by itself</span></code><br>
+Your e-mail program:<code><span class="hlt">from: test@sample.com<br>
+to:jsmith@mindspring.com<br>
+subject: testing<br>
+John, I am testing...<br>
+.</span></code><br>
+Mail server:<code><span class="hlt">250 2.0.0 e1NMajH24604 Message accepted <br>
+for delivery</span></code><br>
+Your e-mail program:<code><span class="hlt">quit</span></code><br>
+Mail server:<code><span class="hlt">221 2.0.0 mx1.mindspring.com closing connection<br>
+Connection closed by foreign host.</span></code><br>
+
+</p><p>It is that simple!  Really!  All e-mail programs do this behind the scenes.  <span class="hlt">If
+ you have "mail.debug" property set to "true", you can see the commands 
+being issued by the Sun JavaMail implementation as they print out on 
+your console.</span>
+
+</p><p>Fetching email from a POP3 server works the same way.  <span class="hlt">See <a href="http://www.howstuffworks.com/email.htm">How E-mail Works</a> for details.</span>
+
+</p><p><span class="hlt">Notice that the sender and recipients e-mail 
+addresses during interaction with the SMTP server are specified before 
+the "body" of the message.  They can be different from what's in the 
+body of the message.</span>
+
+</p></li><li>RFC822 says that the MIME (Multipurpose Internet Mail 
+Extensions) messages exchanged over the Internet must have header lines 
+and content.  All bytes in header and content must be 7-bit US ASCII.  
+Most standard headers are name-value pairs of strings (no binary data). 
+  The header lines are separated from the content by a blank line.  The 
+RFC specifies standard header fields.
+
+</li><li>RFC822 does not say what the content can contain as long as the
+ content bytes are 7-bit US ASCII.  Any non-US-ASCII headers and content
+ need to be encoded into the 7-bit US-ASCII (mail-safe) format using <code>base64</code> and <code>quoted-printable</code>
+ schemes.  The MIME RFCs 2045, 2046 and 2047 specify how to do this.  
+Each MIME content will have a content type, structured body parts and a 
+set of encoding schemes to encode data into mail-safe characters.
+
+
+
+
+</li></ul>
+
+<center>
+<script type="text/javascript"><!--
+google_ad_client = "pub-4447351096301747";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_color_border = "DDB7BA";
+google_color_bg = "FFF5F6";
+google_color_link = "0000CC";
+google_color_url = "008000";
+google_color_text = "6F6F6F";
+//--></script>
+<script type="text/javascript" src="javamail_files/show_ads.js">
+</script><ins style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px"><ins id="aswift_1_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px"><iframe allowtransparency="true" hspace="0" marginwidth="0" marginheight="0" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){i+='.call';setTimeout(h,0)}else if(h.match){i+='.nav';w.location.replace(h)}s.log&amp;&amp;s.log.push(i)}" vspace="0" id="aswift_1" name="aswift_1" style="left: 0pt; position: absolute; top: 0pt;" scrolling="no" frameborder="0" height="90" width="728"></iframe></ins></ins>
+</center>
+
+
+
+
+
+<hr>
+© Vipan Singla 2001
+
+
+</body></html>
